@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const path = require('path')
-
+const env = process.env.NODE_ENV
 module.exports = {
   mode: "production",
   entry: {
@@ -31,15 +31,17 @@ module.exports = {
         ]
       },
       {
-        test: /\.css$/,
+        test: /\.(sa|sc|c)ss$/,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: '/public/path/to/',
+              reloadAll: true,
             },
           },
-          'css-loader',
+          {
+            loader: 'css-loader',
+          },
           {
             loader: 'postcss-loader',
             options: {
@@ -69,8 +71,8 @@ module.exports = {
     new MiniCssExtractPlugin({
        // Options similar to the same options in webpackOptions.output
       // both options are optional
-      filename: '[name].css',
-      chunkFilename: '[name].css',
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[name].[contenthash].css',
     })
   ],
   optimization: {
@@ -84,6 +86,12 @@ module.exports = {
          name: 'node_modules',
          chunks: 'all',
        },
+       styles: {
+         test: /\.css$/,
+         name: 'styles',
+          chunks: 'all',
+          enforce: true,
+        },
       },
     },
   },
